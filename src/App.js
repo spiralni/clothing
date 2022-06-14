@@ -1,4 +1,4 @@
-import { Outlet, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import './categories.styles.scss'
 
 import Navigation from './routes/navigation/navigation.component'
