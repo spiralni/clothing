@@ -1,7 +1,8 @@
 import { useState } from "react"
+import { createAuthUserWithEmailAndPassword, createUserDocFromAuth } from "../../services/firebase.service"
 
 const initialState = {
-    displayName: 'spiralni',
+    displayName: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -18,6 +19,10 @@ const SignUpForm = () => {
         confirmPassword
     } = formFields
 
+    const resetForm = () => {
+        setFormFields(initialState)
+    }
+
     const handleChange = (event) => {
         const { value, name } = event.target
 
@@ -27,10 +32,36 @@ const SignUpForm = () => {
         })
     }
 
+    const signUp = async (event) => {
+        event.preventDefault()
+
+        if (password !== confirmPassword) {
+            window.alert("your passwords do not match")
+            return
+        }
+
+        try {
+            const { user } = await createAuthUserWithEmailAndPassword(email, password)
+            console.log(user);
+
+            await createUserDocFromAuth(user, {
+                displayName: displayName
+            })
+
+            resetForm()
+        } catch(err) {
+            if (err.code) {
+                window.alert(err.code)
+            }
+            
+            console.error(err)
+        }
+    }
+
     return (
         <div>
             <h1>Sign up with your email and password</h1>
-            <form onSubmit={() => {}}>
+            <form onSubmit={signUp}>
                 <label>Display name</label>
                 <input type="text" required name="displayName" onChange={handleChange} value={displayName} />
 

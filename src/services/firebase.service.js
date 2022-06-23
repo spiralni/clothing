@@ -5,7 +5,8 @@ import {
     getAuth, 
     signInWithRedirect, 
     signInWithPopup, 
-    GoogleAuthProvider 
+    GoogleAuthProvider,
+    createUserWithEmailAndPassword 
 } from 'firebase/auth'
 
 import {
@@ -20,7 +21,7 @@ import {
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "INPUT HERE YOUR OWN API KE",
+  apiKey: "INPUT HERE YOUR OWN API KEY",
   authDomain: "clothing-db-40e8e.firebaseapp.com",
   projectId: "clothing-db-40e8e",
   storageBucket: "clothing-db-40e8e.appspot.com",
@@ -42,16 +43,15 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, provider)
 
 const db = getFirestore()
 
-export const createUserDocFromAuth = async (userAuth) => {
+export const createUserDocFromAuth = async (userAuth, additionalInformation = {}) => {
   // first get the ref to the document
-  // From my users collection, get the document ref with id = userAuth.ui
+  // From my users collection, get the document ref with id = userAuth.uid
   const docRef = doc(db, 'users', userAuth.uid)
 
   // get document content or data (if the document exists)
   const userSnapshot = await getDoc(docRef)
 
-  if (!userSnapshot.exists())
-  {
+  if (!userSnapshot.exists()) {
     const { displayName, email } = userAuth
     const createdAt = new Date()
 
@@ -60,7 +60,8 @@ export const createUserDocFromAuth = async (userAuth) => {
       await setDoc(docRef, { 
         displayName, 
         email, 
-        createdAt
+        createdAt,
+        ...additionalInformation
       })
 
     } catch (error) {
@@ -69,4 +70,17 @@ export const createUserDocFromAuth = async (userAuth) => {
   }
 
   return docRef
+}
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+
+  if (!email) {
+    return
+  }
+
+  if (!password) {
+    return
+  }
+
+  return await createUserWithEmailAndPassword(auth, email, password)
 }
