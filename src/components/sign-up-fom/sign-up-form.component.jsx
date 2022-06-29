@@ -1,6 +1,8 @@
 import { useState } from "react"
+import Button from "../../routes/button/button.component"
 import { createAuthUserWithEmailAndPassword, createUserDocFromAuth } from "../../services/firebase.service"
 import FormInput from "../form-input/form-input.component"
+import './sign-up-form.styles.scss'
 
 const initialState = {
     displayName: '',
@@ -60,7 +62,7 @@ const SignUpForm = () => {
     }
 
     return (
-        <div>
+        <div className="sign-up-container">
             <h1>Sign up with your email and password</h1>
             <form onSubmit={signUp}>
                 <FormInput 
@@ -75,7 +77,9 @@ const SignUpForm = () => {
 
                 <FormInput label="Confirm password" type="password" required name="confirmPassword" onChange={handleChange} value={confirmPassword} />
 
-                <button type="submit">Sign up</button>
+                <Button buttonType="google" type="submit">
+                    <span>Sign up</span>
+                </Button>
             </form>
         </div>
     )
